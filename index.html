@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TripWise - Smart Trip Planner</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body{font-family:Arial;background:#0f172a;color:white;text-align:center;padding:20px}
+.box{background:#1e293b;padding:20px;border-radius:15px;max-width:500px;margin:auto}
+input,select{padding:10px;margin:5px;border-radius:8px;border:none;width:90%}
+button{padding:12px 20px;background:#22c55e;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
+h1{color:#22c55e}
+</style>
+</head>
+<body>
+<h1>TripWise</h1>
+<p>Smart Currency Converter + Trip Budget Planner</p>
+<div class="box">
+<h3>Currency Converter</h3>
+<input id="amount" type="number" value="100">
+<br>
+<select id="from"><option value="USD">USD - Dollar</option><option value="INR">INR - Rupee</option><option value="EUR">EUR - Euro</option></select>
+<select id="to"><option value="INR">INR - Rupee</option><option value="USD">USD - Dollar</option><option value="EUR">EUR - Euro</option></select>
+<br><button onclick="convert()">Convert</button>
+<h2 id="result"></h2>
+<hr>
+<h3>Trip Budget</h3>
+<input id="days" type="number" placeholder="How many days? Ex: 5">
+<input id="perday" type="number" placeholder="Daily Expense? Ex: 2000">
+<button onclick="budget()">Calculate Budget</button>
+<h3 id="budgetResult"></h3>
+</div>
+<div style="max-width:500px;margin:20px auto;background:white;border-radius:15px;padding:10px">
+<canvas id="myChart"></canvas>
+</div>
+<script>
+async function convert(){
+ let amt=document.getElementById('amount').value;
+ let from=document.getElementById('from').value;
+ let to=document.getElementById('to').value;
+ let res=await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
+ let data=await res.json();
+ let rate=data.rates[to];
+ document.getElementById('result').innerText = amt + " " + from + " = " + (amt*rate).toFixed(2) + " " + to;
+}
+function budget(){
+ let d=document.getElementById('days').value;
+ let p=document.getElementById('perday').value;
+ document.getElementById('budgetResult').innerText = "Total Trip Budget: Rs." + (d*p + 15000);
+}
+new Chart(document.getElementById('myChart'),{type:'line',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat'],datasets:[{label:'USD to INR Rate',data:[83.1,83.3,83.2,83.5,83.6,83.4],borderColor:'green',fill:false}]}});
+convert();
+</script>
+</body>
+</html>
